@@ -61,40 +61,40 @@ while true; do
   echo "** [flarum] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
   sleep 5
 done
-set -x
+
 ### Check to see if this is a new install
 $mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
 if [ $? -gt 0 ]; then
 	 echo "** [flarum] Starting a clean Flarum installation"
-rm -rf /www/html/config.php
-### Write Configuration Installation File
-  sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" /www/html/config.yml
-  sed -i -e "s|<DB_HOST>|${DB_HOST}|g" /www/html/config.yml
-  sed -i -e "s|<DB_NAME>|${DB_NAME}|g" /www/html/config.yml
-  sed -i -e "s|<DB_USER>|${DB_USER}|g" /www/html/config.yml
-  sed -i -e "s|<DB_PASS>|${DB_PASS}|g" /www/html/config.yml
-  sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.yml
-  sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.yml
-  sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.yml   
-  sed -i -e "s|<ADMIN_USER>|${ADMIN_USER}|g" /www/html/config.yml
-  sed -i -e "s|<ADMIN_PASS>|${ADMIN_PASS}|g" /www/html/config.yml
-  sed -i -e "s|<ADMIN_EMAIL>|${ADMIN_EMAIL}|g" /www/html/config.yml
-  sed -i -e "s|<SITE_TITLE>|${SITE_TITLE}|g" /www/html/config.yml
+   rm -rf /www/html/config.php
+   ### Write Configuration Installation File
+   sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" /www/html/config.yml
+   sed -i -e "s|<DB_HOST>|${DB_HOST}|g" /www/html/config.yml
+   sed -i -e "s|<DB_NAME>|${DB_NAME}|g" /www/html/config.yml
+   sed -i -e "s|<DB_USER>|${DB_USER}|g" /www/html/config.yml
+   sed -i -e "s|<DB_PASS>|${DB_PASS}|g" /www/html/config.yml
+   sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.yml
+   sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.yml
+   sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.yml   
+   sed -i -e "s|<ADMIN_USER>|${ADMIN_USER}|g" /www/html/config.yml
+   sed -i -e "s|<ADMIN_PASS>|${ADMIN_PASS}|g" /www/html/config.yml
+   sed -i -e "s|<ADMIN_EMAIL>|${ADMIN_EMAIL}|g" /www/html/config.yml
+   sed -i -e "s|<SITE_TITLE>|${SITE_TITLE}|g" /www/html/config.yml
 
-php /www/html/flarum install --file=/www/html/config.yml
-rm -rf /www/html/config.yml
+   php /www/html/flarum install --file=/www/html/config.yml
+   rm -rf /www/html/config.yml
 else
-	echo "** [flarum] Detected previous installation"
-rm -rf /www/html/config.yml
-### Write Configuration File
-  sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" /www/html/config.php
-  sed -i -e "s|<DB_HOST>|${DB_HOST}|g" /www/html/config.php 
-  sed -i -e "s|<DB_NAME>|${DB_NAME}|g" /www/html/config.php 
-  sed -i -e "s|<DB_USER>|${DB_USER}|g" /www/html/config.php 
-  sed -i -e "s|<DB_PASS>|${DB_PASS}|g" /www/html/config.php 
-  sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.php 
-  sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.php 
-  sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
+	 echo "** [flarum] Detected previous installation"
+   rm -rf /www/html/config.yml
+   ### Write Configuration File
+   sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" /www/html/config.php
+   sed -i -e "s|<DB_HOST>|${DB_HOST}|g" /www/html/config.php 
+   sed -i -e "s|<DB_NAME>|${DB_NAME}|g" /www/html/config.php 
+   sed -i -e "s|<DB_USER>|${DB_USER}|g" /www/html/config.php 
+   sed -i -e "s|<DB_PASS>|${DB_PASS}|g" /www/html/config.php 
+   sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.php 
+   sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.php 
+   sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
 fi
 
 ### Custom File Support
