@@ -66,6 +66,19 @@ done
 $mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
 if [ $? -gt 0 ]; then
 	 echo "** [flarum] Starting a clean Flarum installation"
+
+   if [ ! -d "/data/assets" ]; then
+      cp -R /assets/install/assets /data
+   fi
+
+   if [ ! -d "/data/storage" ]; then
+      cp -R /assets/install/storage /data
+   fi
+
+   if [ ! -d "/data/extensions" ]; then
+      mkdir -p /data/extensions
+   fi
+
    rm -rf /www/html/config.php
    ### Write Configuration Installation File
    sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" /www/html/config.yml
@@ -85,18 +98,6 @@ if [ $? -gt 0 ]; then
    echo $FLARUM_VERSION 'first installed on '`date`> /data/.version
 
    rm -rf /www/html/config.yml
-
-   if [ ! -d "/data/assets" ]; then
-      cp -R /assets/install/assets /data
-   fi
-
-   if [ ! -d "/data/storage" ]; then
-      cp -R /assets/install/storage /data
-   fi
-
-   if [ ! -d "/data/extensions" ]; then
-      cp -R /assets/install/assets /data
-   fi
 else
 	 echo "** [flarum] Detected previous installation"
    rm -rf /www/html/config.yml
