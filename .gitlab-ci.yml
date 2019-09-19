@@ -1,0 +1,84 @@
+### Docker Build .gitlab-ci.yml
+### Version 3.0 2018-09-21 
+### <daveconroy@selfdesign.org>
+
+variables:
+  REGISTRY: registry.selfdesign.org
+  
+stages:
+  - prepare
+  - build
+  - push
+
+prepare:
+  stage: prepare
+  script:
+    - docker info
+    - git fetch origin
+
+build_develop:
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - docker build -t $REGISTRY/$CI_PROJECT_PATH:develop --compress --squash .
+  only:
+    - develop
+  
+build_branch:
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - IMAGE_TAG=`head -n 1 CHANGELOG.md | awk '{print $2'}`
+    - docker build -t $REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME:$IMAGE_TAG --compress --squash .
+    - docker tag $REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME:$IMAGE_TAG $REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME:latest
+  only:
+    - branches
+  except:
+    - master
+    - develop
+
+build_master:
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - IMAGE_TAG=`head -n 1 CHANGELOG.md | awk '{print $2'}`
+    - docker build -t $REGISTRY/$CI_PROJECT_PATH:$IMAGE_TAG --compress --squash .
+    - docker tag $REGISTRY/$CI_PROJECT_PATH:$IMAGE_TAG $REGISTRY/$CI_PROJECT_PATH:latest
+  only:
+    - master
+
+push_develop:
+  stage: push
+  script:
+    - export COMMIT_DATE=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - IMAGE_TAG=`head -n 1 CHANGELOG.md | awk '{print $2'}`
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - docker push $REGISTRY/$CI_PROJECT_PATH:develop && /usr/local/bin/rocketchat-docker "#it-docker" "*DEVELOPMENT IMAGE BUILT*" "$REGISTRY/$CI_PROJECT_PATH" "develop" "$CI_PROJECT_PATH" "$CI_COMMIT_SHA" "$CI_COMMIT_REF_NAME" "$GITLAB_USER_EMAIL" "$COMMIT_DATE" "$CI_COMMIT_TITLE"
+  only:
+    - develop
+
+push_branch:
+  stage: push
+  script:
+    - export COMMIT_DATE=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - IMAGE_TAG=`head -n 1 CHANGELOG.md | awk '{print $2'}`
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - docker push $REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME:$IMAGE_TAG && /usr/local/bin/rocketchat-docker "#it-docker" "*IMAGE BUILT*" "$REGISTRY/$CI_PROJECT_PATH" "$CI_COMMIT_REF_NAME:$IMAGE_TAG" "$CI_PROJECT_PATH" "$CI_COMMIT_SHA" "$CI_COMMIT_REF_NAME" "$GITLAB_USER_EMAIL" "$COMMIT_DATE" "$CI_COMMIT_TITLE"
+    - docker push $REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME:latest && /usr/local/bin/rocketchat-docker "#it-docker" "*IMAGE BUILT*" "$REGISTRY/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME" "latest" "$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME" "$CI_COMMIT_SHA" "$CI_COMMIT_REF_NAME" "$GITLAB_USER_EMAIL" "$COMMIT_DATE" "$CI_COMMIT_TITLE"
+  only:
+    - branches
+  except:
+    - master
+    - develop
+
+push_master:
+  stage: push
+  script:
+    - export COMMIT_DATE=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - IMAGE_TAG=`head -n 1 CHANGELOG.md | awk '{print $2'}`
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REGISTRY
+    - docker push $REGISTRY/$CI_PROJECT_PATH:$IMAGE_TAG && /usr/local/bin/rocketchat-docker "#it-docker" "*IMAGE BUILT*" "$REGISTRY/$CI_PROJECT_PATH" "$IMAGE_TAG" "$CI_PROJECT_PATH" "$CI_COMMIT_SHA" "$CI_COMMIT_REF_NAME" "$GITLAB_USER_EMAIL" "$COMMIT_DATE" "$CI_COMMIT_TITLE"
+    - docker push $REGISTRY/$CI_PROJECT_PATH:latest && /usr/local/bin/rocketchat-docker "#it-docker" "*IMAGE BUILT*" "$REGISTRY/$CI_PROJECT_PATH" "latest" "$CI_PROJECT_PATH" "$CI_COMMIT_SHA" "$CI_COMMIT_REF_NAME" "$GITLAB_USER_EMAIL" "$COMMIT_DATE" "$CI_COMMIT_TITLE"
+  only:
+    - master
+

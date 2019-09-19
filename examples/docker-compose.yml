@@ -1,0 +1,68 @@
+version: '3.7'
+services:
+  
+  flarum-app:
+    image: tiredofit/flarum
+    container_name: flarum-app
+    labels:
+      - traefik.enable=true
+      - traefik.public.backend=flarum-app
+      - traefik.public.port=80
+      - traefik.public.frontend.rule=Host:flarum.example.com
+      - traefik.docker.network=proxy
+    links:
+    - flarum-db
+    volumes:
+    - ./logs/:/www/logs
+    environment:
+    - SITE_URL=https://home.tiredofit.ca
+    - ZABBIX_HOSTNAME=flarum-app
+    networks:
+      - proxy
+      - services
+    restart: always
+
+  flarum-db:
+    image: tiredofit/mariadb
+    container_name: flarum-db
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=flarum
+      - MYSQL_USER=flarum
+      - MYSQL_PASSWORD=flarum
+
+      - ZABBIX_HOSTNAME=flarum-db
+    networks:
+      - services
+    restart: always
+
+  flarum-db-backup:
+    container_name: flarum-db-backup
+    image: tiredofit/db-backup
+    links:
+     - flarum-db
+    volumes:
+      - ./dbbackup:/backup
+    environment:
+      - ZABBIX_HOSTNAME=flarum-db-backup
+      - DB_HOST=flarum-db
+      - DB_TYPE=mariadb
+      - DB_NAME=flarum
+      - DB_USER=flarum
+      - DB_PASS=flarum
+      - DB_DUMP_FREQ=1440
+      - DB_DUMP_BEGIN=0000
+      - DB_CLEANUP_TIME=8640
+      - COMPRESSION=BZ
+      - MD5=TRUE
+    networks:
+      - services
+    restart: always
+
+networks:
+  proxy:
+    external: true
+  services:
+    external: true

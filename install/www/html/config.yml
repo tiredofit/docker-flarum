@@ -1,0 +1,18 @@
+debug: <DEBUG_MODE>
+baseUrl: <SITE_URL>
+databaseConfiguration:
+  driver: mysql
+  host: <DB_HOST>
+  database: <DB_NAME>
+  username: <DB_USER>
+  password: <DB_PASS>
+  prefix: <DB_PREFIX>
+  port: <DB_PORT>
+adminUser:
+  username: <ADMIN_USER>
+  password: <ADMIN_PASS>
+  password_confirmation: <ADMIN_PASS>
+  email: <ADMIN_EMAIL>
+settings:
+  forum_title: <SITE_TITLE>
+
