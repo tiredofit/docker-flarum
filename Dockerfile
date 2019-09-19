@@ -26,6 +26,17 @@ RUN set -x && \
     composer clear-cache && \
     touch /www/html/index.php && \
     \
+    ## Data Persistence Setup
+    mkdir /assets/install && \
+    cp -R /www/html/assets /assets/install && \
+    cp -R /www/html/storage /assets/install && \
+    mkdir -p /assets/install/extensions && \
+    rm -rf /www/html/assets && \
+    rm -rf /www/html/storage && \
+    ln -s /www/html/assets /data/assets && \
+    ln -s /www/html/storage /data/storage && \
+    ln -s /www/html/extensions /data/extensions && \
+    \
     # Revert PHP Hack to allow for composer to run upon build
     mv /etc/php7/php-fpm.confx /etc/php7/php-fpm.conf && \
     mv /etc/php7/php.inix /etc/php7/php.ini && \

@@ -82,7 +82,21 @@ if [ $? -gt 0 ]; then
    sed -i -e "s|<SITE_TITLE>|${SITE_TITLE}|g" /www/html/config.yml
 
    php /www/html/flarum install --file=/www/html/config.yml
+   echo $FLARUM_VERSION 'first installed on '`date`> /data/.version
+
    rm -rf /www/html/config.yml
+
+   if [ ! -d "/data/assets" ]; then
+      cp -R /assets/install/assets /data
+   fi
+
+   if [ ! -d "/data/storage" ]; then
+      cp -R /assets/install/storage /data
+   fi
+
+   if [ ! -d "/data/extensions" ]; then
+      cp -R /assets/install/assets /data
+   fi
 else
 	 echo "** [flarum] Detected previous installation"
    rm -rf /www/html/config.yml
@@ -95,6 +109,13 @@ else
    sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.php 
    sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.php 
    sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
+   ### Upgrade Check
+   if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{ print $1 }'` ]; then
+      echo '** [flarum] Detected New Version from original installation, attempting automatic upgrade'
+      php /www/html/flarum migrate
+      php /www/html/flarum cache:clear
+      echo $FLARUM_VERSION 'upgraded on '`date` | cat - /data/.version > /tmp/.version && mv /tmp/.version /data/.version
+   fi
 fi
 
 ### Custom File Support
