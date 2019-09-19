@@ -109,6 +109,8 @@ else
    sed -i -e "s|<DB_PASS>|${DB_PASS}|g" /www/html/config.php 
    sed -i -e "s|<DB_PORT>|${DB_PORT}|g" /www/html/config.php 
    sed -i -e "s|<DB_PREFIX>|${DB_PREFIX}|g" /www/html/config.php 
+   sed -i -e "s|<ADMIN_PATH>|${ADMIN_PATH}|g" /www/html/config.php 
+   sed -i -e "s|<API_PATH>|${API_PATH}|g" /www/html/config.php 
    sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
    ### Upgrade Check
    if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{ print $1 }'` ]; then
@@ -130,6 +132,7 @@ else
       while read line; do
         extension="${extension}${line} "
       done < ${LIST_FILE}
+      echo "** [flarum] Extensions: Installing "${extension}
       cmd="composer require ${extension}"
       COMPOSER_CACHE_DIR="${CACHE_DIR}" eval $cmd
       echo "** [flarum] Finished installing extra extensions"
@@ -137,6 +140,8 @@ else
       echo "** [flarum] No extensions to install"
   fi
 fi
+
+     php /www/html/flarum cache:clear
 
 ### Custom File Support
 if [ -d /assets/custom ] ; then
