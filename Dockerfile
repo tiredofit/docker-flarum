@@ -24,6 +24,7 @@ RUN set -x && \
     chown -R nginx:www-data /www/html && \
     COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum /www/html v$FLARUM_VERSION --stability=beta && \
     composer clear-cache && \
+    touch /www/html/index.php && \
     \
     # Revert PHP Hack to allow for composer to run upon build
     mv /etc/php7/php-fpm.confx /etc/php7/php-fpm.conf && \
