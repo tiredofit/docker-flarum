@@ -24,18 +24,18 @@ RUN set -x && \
     chown -R nginx:www-data /www/html && \
     COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum /www/html v$FLARUM_VERSION --stability=beta && \
     composer clear-cache && \
-    touch /www/html/index.php && \
+    touch /www/html/index.php
     \
     ## Data Persistence Setup
-    mkdir /assets/install && \
-    cp -R /www/html/assets /assets/install && \
+RUN    mkdir /assets/install && \
+    cp -R /www/html/public/assets /assets/install && \
     cp -R /www/html/storage /assets/install && \
     mkdir -p /assets/install/extensions && \
-    rm -rf /www/html/assets && \
+    rm -rf /www/html/public/assets && \
     rm -rf /www/html/storage && \
-    ln -s /www/html/assets /data/assets && \
-    ln -s /www/html/storage /data/storage && \
-    ln -s /www/html/extensions /data/extensions && \
+    ln -s /data/assets /www/html/public/assets && \
+    ln -s /data/storage /www/html/storage && \
+    ln -s /data/extensions /www/html/extensions && \
     \
     # Revert PHP Hack to allow for composer to run upon build
     mv /etc/php7/php-fpm.confx /etc/php7/php-fpm.conf && \
