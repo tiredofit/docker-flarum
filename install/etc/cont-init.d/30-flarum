@@ -125,11 +125,11 @@ else
    LIST_FILE=/www/html/extensions/list
 
    ## Download extra extensions installed with composer wrapup script
-   if [ -s "${LIST_FILE}" ]; then
+   if [ -f "${LIST_FILE}" ]; then
       echo "** [flarum] Installing extensions"
       while read line; do
         extension="${extension}${line} "
-      done < /flarum/app/extensions/list
+      done < ${LIST_FILE}
       cmd="composer require ${extension}"
       COMPOSER_CACHE_DIR="${CACHE_DIR}" eval $cmd
       echo "** [flarum] Finished installing extra extensions"
@@ -145,6 +145,7 @@ if [ -d /assets/custom ] ; then
   chown -R nginx:www-data /www/html
 fi
 
+chown -R nginx:www-data /data
 chown -R nginx:www-data /www/html
 
 mkdir -p /tmp/state
