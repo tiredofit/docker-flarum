@@ -116,6 +116,25 @@ else
       php /www/html/flarum cache:clear
       echo $FLARUM_VERSION 'upgraded on '`date` | cat - /data/.version > /tmp/.version && mv /tmp/.version /data/.version
    fi
+   ### Extensions Check
+   php /www/html/flarum cache:clear
+
+   ## Composer cache dir and packages list paths
+   CACHE_DIR=/www/html/extensions/.cache
+   LIST_FILE=/www/html/extensions/list
+
+   ## Download extra extensions installed with composer wrapup script
+   if [ -s "${LIST_FILE}" ]; then
+      echo "** [flarum] Installing extensions"
+      while read line; do
+        extension="${extension}${line} "
+      done < /flarum/app/extensions/list
+      cmd="composer require ${extension}"
+      COMPOSER_CACHE_DIR="${CACHE_DIR}" eval $cmd
+      echo "** [flarum] Finished installing extra extensions"
+  else
+      echo "** [flarum] No extensions to install"
+  fi
 fi
 
 ### Custom File Support
