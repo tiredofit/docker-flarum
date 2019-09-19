@@ -23,7 +23,6 @@ ADMIN_USER=${ADMIN_USER:-"admin"}
 ADMIN_PASS=${ADMIN_PASS:-"flarum"}
 ADMIN_EMAIL=${ADMIN_EMAIL:-"admin@example.com"}
 
-
 ### Sanity Test
 if [ ! -n "$DB_HOST" ]; then
     echo '** [flarum] ERROR: No Database Host Entered! '
@@ -62,9 +61,9 @@ while true; do
   echo "** [flarum] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
   sleep 5
 done
-
+set -x
 ### Check to see if this is a new install
-$mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"_migrations;" > /dev/null 2>&1
+$mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
 if [ $? -gt 0 ]; then
 	 echo "** [flarum] Starting a clean Flarum installation"
 rm -rf /www/html/config.php
