@@ -4,7 +4,7 @@ while [ ! -f /tmp/state/init-20-php-fpm ]
 do
   sleep 1
 done
-
+set -x
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
     set -x
@@ -96,7 +96,9 @@ if [ $? -gt 0 ]; then
 
    php /www/html/flarum install --file=/www/html/config.yml
    echo $FLARUM_VERSION 'first installed on '`date`> /data/.version
-
+   cp -R /www/html/composer.json /data
+   rm -rf /www/html/composer.json
+   ln -s /data/composer.json /www/html/composer.json
    rm -rf /www/html/config.yml
 else
 	 echo "** [flarum] Detected previous installation"
@@ -118,7 +120,13 @@ else
       php /www/html/flarum migrate
       php /www/html/flarum cache:clear
       echo $FLARUM_VERSION 'upgraded on '`date` | cat - /data/.version > /tmp/.version && mv /tmp/.version /data/.version
+      cp /www/html/composer.json /data/composer.json
+      ln -s /data/composer.json /www/html/composer.json
+   else 
+      rm -rf /www/html/composer.json
+      ln -s /data/composer.json /www/html/composer.json
    fi
+
    ### Extensions Check
    php /www/html/flarum cache:clear
 
@@ -128,16 +136,24 @@ else
 
    ## Download extra extensions installed with composer wrapup script
    if [ -f "${LIST_FILE}" ]; then
+      cd /www/html
+      composer outdated > /tmp/composer-updates
       echo "** [flarum] Installing extensions"
       while read line; do
         extension="${extension}${line} "
+        if [ `cat /www/html/composer.json | grep ${extension} | awk '{print $1}'` ]; then
+            echo "** [flarum] Extensions: Found "${extension}" however it is already installed..."
+             if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2}'` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $3}'` ]; then
+               echo "** [flarum] Extensions: Newer version of "${extension} "found. Upgrading"
+               COMPOSER_CACHE_DIR="${CACHE_DIR}" composer update ${extension}
+               php php /www/html/flarum migrate
+             fi
+        else
+        echo "** [flarum] Extensions: Installing "${extension}
+        COMPOSER_CACHE_DIR="${CACHE_DIR}" composer require ${extension}
+              fi
       done < ${LIST_FILE}
-      echo "** [flarum] Extensions: Installing "${extension}
-      cmd="composer require ${extension}"
-      COMPOSER_CACHE_DIR="${CACHE_DIR}" eval $cmd
-      echo "** [flarum] Finished installing extra extensions"
-  else
-      echo "** [flarum] No extensions to install"
+      echo "** [flarum] Finished installing extensions"
   fi
 fi
 
