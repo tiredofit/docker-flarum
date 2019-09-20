@@ -1,3 +1,7 @@
+## 1.0.2 2019-09-19 <dave at tiredofit dot ca>
+
+* Hardcore a few paths for reliability
+
 ## 1.0.1 2019-09-19 <dave at tiredofit dot ca>
 
 * Minor Tweak to Extensions Installing

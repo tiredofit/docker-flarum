@@ -137,10 +137,8 @@ if [ $? -gt 0 ]; then
 
      ### Extensions Check (Install / Update if available
      silent php /www/html/flarum cache:clear
-     COMPOSER_CACHE_DIR=/www/html/extensions/.cache
      mkdir -p /www/html/extensions/.cache
-     EXTENSIONS_LIST=/www/html/extensions/install
-     if [ -f "${EXTENSIONS_LIST}" ]; then
+     if [ -f "/www/html/extensions/install" ]; then
         echo "** [flarum] Installing extensions.. This may take a while to get prepared.."
         cd /www/html
         silent composer outdated > /tmp/composer-updates
@@ -150,15 +148,15 @@ if [ $? -gt 0 ]; then
               if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                  if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
                    echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
-                   silent COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR}" composer update ${extension}
+                   silent composer update ${extension}
                    silent php /www/html/flarum migrate
                  fi
                fi
           else
           echo "** [flarum] Extensions: Installing "${extension}
-          silent COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR}" composer require ${extension}
+          silent composer require ${extension}
                 fi
-        done < ${EXTENSIONS_LIST}
+        done < /www/html/extensions/install
         rm -rf /tmp/composer-updates
         echo "** [flarum] Finished installing extensions"
     fi

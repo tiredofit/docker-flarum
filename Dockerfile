@@ -24,10 +24,10 @@ RUN set -x && \
     chown -R nginx:www-data /www/html && \
     COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum /www/html v$FLARUM_VERSION --stability=beta && \
     composer clear-cache && \
-    touch /www/html/index.php
+    touch /www/html/index.php && \
     \
     ## Data Persistence Setup
-RUN    mkdir /assets/install && \
+    mkdir /assets/install && \
     cp -R /www/html/public/assets /assets/install && \
     cp -R /www/html/storage /assets/install && \
     mkdir -p /assets/install/extensions && \
@@ -45,5 +45,6 @@ RUN    mkdir /assets/install && \
     ## Cleanup
     rm -rf /var/cache/apk/* /tmp/*
 
+ENV COMPOSER_CACHE_DIR=/www/html/extensions/.cache
 ADD install /
 
