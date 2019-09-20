@@ -57,7 +57,7 @@ docker pull tiredofit/flarum:(imagetag)
 ```
 The following image tags are available:
 
-* `latest` - Flarum 0.10beta
+* `latest` - Flarum 0.10beta 10
 
 You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
 
@@ -128,8 +128,8 @@ Example:
 assets  composer.json  extensions  storage
 [/var/local/data/flarum/data] $ cd extensions/
 [/var/local/data/flarum/data/extensions] $ ls
-installed
-[/var/local/data/flarum/data/extensions] $ cat installed
+install
+[/var/local/data/flarum/data/extensions] $ cat install
 flagrow/upload
 michaelbelgium/flarum-discussion-views
 [/var/local/data/flarum/data/extensions] $ 
