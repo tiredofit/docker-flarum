@@ -138,19 +138,17 @@ else
 
    ### Extensions Check (Install / Update if available
    silent php /www/html/flarum cache:clear
-
    CACHE_DIR=/www/html/extensions/.cache
    LIST_FILE=/www/html/extensions/list
-
    if [ -f "${LIST_FILE}" ]; then
       echo "** [flarum] Installing extensions.. This may take a while to get prepared.."
       cd /www/html
       silent composer outdated > /tmp/composer-updates
       while read line; do
         extension="${line} "
-        if [ `cat /www/html/composer.json | grep ${extension} | awk '{print $1}'` ]; then
+        if [ `cat /www/html/composer.json | grep ${extension} | awk '{print $1'}` ]; then
             echo "** [flarum] Extensions: Found "${extension}"however it is already installed..."
-             if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2}'` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $3}'` ]; then
+             if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $3'}` ]; then
                echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
                silent COMPOSER_CACHE_DIR="${CACHE_DIR}" composer update ${extension}
                silent php /www/html/flarum migrate
@@ -177,7 +175,7 @@ fi
 chown -R nginx:www-data /data
 chown -R nginx:www-data /www/html
 
-echo "** [flarum] Container Initialized - Now starting Web Services - Visit "$SITE_URL"to proceed"
+echo "** [flarum] Container Initialized - Now starting Web Services - Visit "$SITE_URL" to proceed"
 
 mkdir -p /tmp/state
 touch /tmp/state/init-30-flarum
