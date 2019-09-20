@@ -124,7 +124,7 @@ else
    sed -i -e "s|<API_PATH>|${API_PATH}|g" /www/html/config.php 
    sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
    ### Upgrade Check
-   if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{ print $1 }'` ]; then
+   if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{print $1'}` ]; then
       echo '** [flarum] Detected New Version from original installation, attempting automatic upgrade.. This may take a while..'
       silent php /www/html/flarum migrate
       silent php /www/html/flarum cache:clear
