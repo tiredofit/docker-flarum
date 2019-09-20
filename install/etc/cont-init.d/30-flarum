@@ -148,7 +148,7 @@ else
       while read line; do
         extension="${line}"
         if [ `cat /www/html/composer.json | grep ${extension} | awk '{print $1'}` ]; then
-            echo "** [flarum] Extensions: Found "${extension}"however it is already installed..."
+            echo "** [flarum] Extensions: Found "${extension}" however it is already installed..."
             if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
                  echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
