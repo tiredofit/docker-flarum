@@ -137,7 +137,7 @@ if [ $? -gt 0 ]; then
 
      ### Extensions Check (Install / Update if available
      silent php /www/html/flarum cache:clear
-     CACHE_DIR=/www/html/extensions/.cache
+     COMPOSER_CACHE_DIR=/www/html/extensions/.cache
      mkdir -p /www/html/extensions/.cache
      EXTENSIONS_LIST=/www/html/extensions/install
      if [ -f "${EXTENSIONS_LIST}" ]; then
