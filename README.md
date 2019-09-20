@@ -128,8 +128,8 @@ Example:
 assets  composer.json  extensions  storage
 [/var/local/data/flarum/data] $ cd extensions/
 [/var/local/data/flarum/data/extensions] $ ls
-list
-[/var/local/data/flarum/data/extensions] $ cat list
+installed
+[/var/local/data/flarum/data/extensions] $ cat installed
 flagrow/upload
 michaelbelgium/flarum-discussion-views
 [/var/local/data/flarum/data/extensions] $ 
