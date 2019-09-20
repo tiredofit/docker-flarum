@@ -150,13 +150,13 @@ if [ $? -gt 0 ]; then
               if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                  if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
                    echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
-                   silent COMPOSER_CACHE_DIR="${CACHE_DIR}" composer update ${extension}
+                   silent COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR}" composer update ${extension}
                    silent php /www/html/flarum migrate
                  fi
                fi
           else
           echo "** [flarum] Extensions: Installing "${extension}
-          silent COMPOSER_CACHE_DIR="${CACHE_DIR}" composer require ${extension}
+          silent COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR}" composer require ${extension}
                 fi
         done < ${EXTENSIONS_LIST}
         rm -rf /tmp/composer-updates
