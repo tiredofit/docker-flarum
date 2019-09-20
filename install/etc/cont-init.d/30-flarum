@@ -1,10 +1,19 @@
 #!/usr/bin/with-contenv bash
 
+
+silent() {
+  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
+    "$@"
+  else
+    "$@" > /dev/null 2>&1
+  fi
+}
+
 while [ ! -f /tmp/state/init-20-php-fpm ]
 do
   sleep 1
 done
-set -x
+
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
     set -x
@@ -65,7 +74,7 @@ done
 ### Check to see if this is a new install
 $mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
 if [ $? -gt 0 ]; then
-	 echo "** [flarum] Starting a clean Flarum installation"
+	 echo "** [flarum] Starting a clean Flarum installation. This may take 1-10 minutes.."
 
    if [ ! -d "/data/assets" ]; then
       cp -R /assets/install/assets /data
@@ -94,7 +103,7 @@ if [ $? -gt 0 ]; then
    sed -i -e "s|<ADMIN_EMAIL>|${ADMIN_EMAIL}|g" /www/html/config.yml
    sed -i -e "s|<SITE_TITLE>|${SITE_TITLE}|g" /www/html/config.yml
 
-   php /www/html/flarum install --file=/www/html/config.yml
+   silent php /www/html/flarum install --file=/www/html/config.yml
    echo $FLARUM_VERSION 'first installed on '`date`> /data/.version
    cp -R /www/html/composer.json /data
    rm -rf /www/html/composer.json
@@ -116,9 +125,9 @@ else
    sed -i -e "s|<SITE_URL>|${SITE_URL}|g" /www/html/config.php
    ### Upgrade Check
    if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{ print $1 }'` ]; then
-      echo '** [flarum] Detected New Version from original installation, attempting automatic upgrade'
-      php /www/html/flarum migrate
-      php /www/html/flarum cache:clear
+      echo '** [flarum] Detected New Version from original installation, attempting automatic upgrade.. This may take a while..'
+      silent php /www/html/flarum migrate
+      silent php /www/html/flarum cache:clear
       echo $FLARUM_VERSION 'upgraded on '`date` | cat - /data/.version > /tmp/.version && mv /tmp/.version /data/.version
       cp /www/html/composer.json /data/composer.json
       ln -s /data/composer.json /www/html/composer.json
@@ -127,37 +136,36 @@ else
       ln -s /data/composer.json /www/html/composer.json
    fi
 
-   ### Extensions Check
-   php /www/html/flarum cache:clear
+   ### Extensions Check (Install / Update if available
+   silent php /www/html/flarum cache:clear
 
-   ## Composer cache dir and packages list paths
    CACHE_DIR=/www/html/extensions/.cache
    LIST_FILE=/www/html/extensions/list
 
-   ## Download extra extensions installed with composer wrapup script
    if [ -f "${LIST_FILE}" ]; then
+      echo "** [flarum] Installing extensions.. This may take a while to get prepared.."
       cd /www/html
-      composer outdated > /tmp/composer-updates
-      echo "** [flarum] Installing extensions"
+      silent composer outdated > /tmp/composer-updates
       while read line; do
-        extension="${extension}${line} "
+        extension="${line} "
         if [ `cat /www/html/composer.json | grep ${extension} | awk '{print $1}'` ]; then
-            echo "** [flarum] Extensions: Found "${extension}" however it is already installed..."
+            echo "** [flarum] Extensions: Found "${extension}"however it is already installed..."
              if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2}'` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $3}'` ]; then
-               echo "** [flarum] Extensions: Newer version of "${extension} "found. Upgrading"
-               COMPOSER_CACHE_DIR="${CACHE_DIR}" composer update ${extension}
-               php php /www/html/flarum migrate
+               echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
+               silent COMPOSER_CACHE_DIR="${CACHE_DIR}" composer update ${extension}
+               silent php /www/html/flarum migrate
              fi
         else
         echo "** [flarum] Extensions: Installing "${extension}
-        COMPOSER_CACHE_DIR="${CACHE_DIR}" composer require ${extension}
+        silent COMPOSER_CACHE_DIR="${CACHE_DIR}" composer require ${extension}
               fi
       done < ${LIST_FILE}
+      rm -rf /tmp/composer-updates
       echo "** [flarum] Finished installing extensions"
   fi
 fi
 
-     php /www/html/flarum cache:clear
+     silent php /www/html/flarum cache:clear
 
 ### Custom File Support
 if [ -d /assets/custom ] ; then
@@ -168,6 +176,8 @@ fi
 
 chown -R nginx:www-data /data
 chown -R nginx:www-data /www/html
+
+echo "** [flarum] Container Initialized - Now starting Web Services - Visit "$SITE_URL"to proceed"
 
 mkdir -p /tmp/state
 touch /tmp/state/init-30-flarum
