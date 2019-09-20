@@ -1,3 +1,7 @@
+## 1.0.1 2019-09-19 <dave at tiredofit dot ca>
+
+* Minor Tweak to Extensions Installing
+
 ## 1.0 2019-09-19 <dave at tiredofit dot ca>
 
 * Flarum 0.10 beta 10
