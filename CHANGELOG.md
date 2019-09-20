@@ -1,6 +1,6 @@
 ## 1.0 2019-09-19 <dave at tiredofit dot ca>
 
-* Flarum 0.10 beta
+* Flarum 0.10 beta 10
 * Automatic Upgrade Support
 * Auto Download / Upgrade Extensions
 
