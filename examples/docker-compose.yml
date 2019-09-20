@@ -11,12 +11,26 @@ services:
       - traefik.public.frontend.rule=Host:flarum.example.com
       - traefik.docker.network=proxy
     links:
-    - flarum-db
+      - flarum-db
     volumes:
-    - ./logs/:/www/logs
+      - ./data:/data
+      - ./logs/:/www/logs
     environment:
-    - SITE_URL=https://home.tiredofit.ca
-    - ZABBIX_HOSTNAME=flarum-app
+      - ZABBIX_HOSTNAME=flarum-app
+
+      - ADMIN_USER=admin
+      - ADMIN_PASS=flarum
+      - ADMIN_EMAIL=admin@example.com
+
+      - SITE_TITLE=Flarum
+      - SITE_URL=https://flarum.example.com
+  
+      - DB_HOST=flarum-db
+      - DB_NAME=flarum
+      - DB_USER=flarum
+      - DB_PASS=flarum
+
+      - DEBUG_MODE=FALSE
     networks:
       - proxy
       - services

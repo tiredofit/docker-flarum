@@ -10,7 +10,7 @@
 
 This will build a container for [flarum](https://www.flarum.org) - A PHP Based forum software. Upon starting this image it will give you a turn-key message board for communicating to groups, peers, or the public. 
 
-* Latest release Version 0.10beta
+* Latest release Version 0.10 beta 10
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
 * Automatically install and keep up to date plugins from Github/Flagrow/Elsewhere
