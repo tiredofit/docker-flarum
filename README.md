@@ -116,7 +116,7 @@ The following ports are exposed.
 |-----------|-------------|
 | `80`      | HTTP        |
 
-# Installing Plugins and Extensions
+### Installing Plugins and Extensions
 
 * Make a file in your `/data/extensions` folder called `install` and place on each line the Github Repositories name. Upon startup, the container will fetch the source code via composer, save a cache of the install, and then install. Upon further restarts of the container, the image will check to see if there are any updates to the extension, and will proceed with upgrading to the latest.
 
@@ -134,6 +134,9 @@ flagrow/upload
 michaelbelgium/flarum-discussion-views
 [/var/local/data/flarum/data/extensions] $ 
 ````
+
+# Maintenance
+
 
 #### Shell Access
 
