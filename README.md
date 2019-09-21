@@ -105,6 +105,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
 | `DB_PREFIX` | MySQL Prefix for `DB_NAME` - Default `flarum_`|
 | `DEBUG_MODE` | Enable Debug Mode (verbosity) for the container installation/startup and in application - `TRUE` / `FALSE` - Default `FALSE` |
+| `EXTENSIONS_AUTO_UPDATE` | Automatically update extensions on container startup `TRUE` / `FALSE` - Default `TRUE` |
 | `SITE_TITLE` | The Title of the Website - Default `Flarum` |
 | `SITE_URL` | The Full site URL of the installation e.g. `https://flarum.example.com` |
 
@@ -134,6 +135,22 @@ flagrow/upload
 michaelbelgium/flarum-discussion-views
 [/var/local/data/flarum/data/extensions] $ 
 ````
+
+Alternatively, if you wish to install an extension while the container is running without restarting, you can use the tool located in `/usr/sbin/extension-tool`
+
+Syntax is as follows:
+````
+Usage:
+  extension-tool {install|remove|update} {packagename}
+  extension-tool {install|remove|update} {packagename} --debug
+  extension-tool -h|--help
+````
+
+For example, if you wished to install `fof/drafts` then here is a command to do it from your host:
+
+`docker exec -it (yourcontainername) extension-tool install fof/drafts`
+
+The rest of the options are self explanatory.
 
 # Maintenance
 

@@ -21,6 +21,7 @@ else
     DEBUG_MODE=false
 fi
 
+
 ### Set Defaults
 ADMIN_EMAIL=${ADMIN_EMAIL:-"admin@example.com"}
 ADMIN_PASS=${ADMIN_PASS:-"flarum"}
@@ -147,9 +148,14 @@ if [ $? -gt 0 ]; then
               echo "** [flarum] Extensions: Found "${extension}" however it is already installed..."
               if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                  if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
-                   echo "** [flarum] Extensions: Newer version of "${extension}"found. Upgrading.."
-                   silent composer update ${extension}
-                   silent php /www/html/flarum migrate
+                   if [ "$EXTENSIONS_AUTO_UPDATE" = "FALSE" ] || [ "$EXTENSIONS_AUTO_UPDATE" = "false" ]; then
+                      echo "** [flarum] Extensions: Auto Updating of Extensions Disabled"
+                      echo "** [flarum] Extensions: Newer Version of "${extension}" found - Please update manually"
+                   else
+                      echo "** [flarum] Extensions: Newer version of "${extension}" found. Upgrading.."
+                      silent composer update ${extension}
+                      silent php /www/html/flarum migrate
+                   fi
                  fi
                fi
           else
