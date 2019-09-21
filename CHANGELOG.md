@@ -1,3 +1,7 @@
+## 1.1.1 2019-09-21 <dave at tiredofit dot ca>
+
+* Add showing available updates to extension tool
+
 ## 1.1 2019-09-21 <dave at tiredofit dot ca>
 
 * Added `extension-tool` to install/remove/update extensions while container is running

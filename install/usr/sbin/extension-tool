@@ -8,13 +8,6 @@ silent() {
   fi
 }
 
-if [ ! -n "$2" ]; then
-    echo $"Usage:"
-    echo "  $0 {install|remove|update} {packagename}"
-    echo "  $0 {install|remove|update} {packagename} --debug"
-    echo "  $0 -h|--help"
-    exit 1
-fi
 
 if [ "$3" = "--debug" ]; then
   set -x
@@ -46,6 +39,7 @@ case "$1" in
         echo "**** [flarum-extension-tool] ${2} is already installed. Perhaps you wish to update?"
     else
         silent composer require ${2}
+        echo ${2} >> /data/extensions/install 
         echo "**** [flarum-extension-tool] ${2} installed."
     fi
     cleanup
@@ -55,6 +49,7 @@ case "$1" in
     echo "**** [flarum-extension-tool] Removing Packge ${2}"
     if [ `check_if_installed $2` != "0" ] ; then
         silent composer remove ${2}
+        sed "${2}/d" /data/extensions/install
         echo "**** [flarum-extension-tool] ${2} removed."
     else
         echo "**** [flarum-extension-tool] ${2} not installed. Please verify package name"
@@ -64,12 +59,18 @@ case "$1" in
   update|u)  # Update Package
     init
     if [ `check_if_installed $2` != "0" ] ; then
-        echo "**** [flarum-extension-tool] Updating Package ${2}"
         echo "**** [flarum-extension-tool] Downloading Repository Information"
         silent composer outdated > /tmp/composer-updates
-           if [[ `cat /tmp/composer-updates | grep ${2} | awk '{print $1'}` ]]; then
-                   if [ `cat /tmp/composer-updates | grep ${2} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${2} | awk '{print $4'}` ]; then    
-                echo "**** [flarum-extension-tool] Newer version of ${2} found. Upgrading.."
+        if [ "$2" = "list" ];  then
+            echo "**** [flarum-extension-tool] Showing updates available for all packages"
+            cat /tmp/composer-updates
+            cleanup
+            exit 1
+        fi
+        if [[ `cat /tmp/composer-updates | grep ${2} | awk '{print $1'}` ]]; then
+                echo "**** [flarum-extension-tool] Updating Package ${2}"
+                if [ `cat /tmp/composer-updates | grep ${2} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${2} | awk '{print $4'}` ]; then    
+                    echo "**** [flarum-extension-tool] Newer version of ${2} found. Upgrading.."
                     silent composer update ${2}
                     silent php /www/html/flarum migrate
                     echo "**** [flarum-extension-tool] Update of package ${2} completed."
@@ -88,6 +89,8 @@ case "$1" in
     echo "  install             Install Package if not already installed"
     echo "  remove              Remove Package if installed"
     echo "  update              Updte Package if installed"
+    echo "  update list         Show all available package updates"
+    exit 1
     ;;
   *)
     echo $"Usage:"
@@ -96,3 +99,11 @@ case "$1" in
     echo "  $0 -h|--help"
     exit 1
 esac
+
+if [ ! -n "$2" ]; then
+    echo $"Usage:"
+    echo "  $0 {install|remove|update} {packagename}"
+    echo "  $0 {install|remove|update} {packagename} --debug"
+    echo "  $0 -h|--help"
+    exit 1
+fi
