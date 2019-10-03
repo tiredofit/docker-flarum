@@ -12,13 +12,12 @@ This will build a container for [flarum](https://www.flarum.org) - A PHP Based f
 
 * Latest release Version 0.10 beta 10
 * Supports Data Persistence
-* Fail2Ban installed to block brute force attacks
 * Automatically install and keep up to date plugins from Github/Flagrow/Elsewhere
 * Automatically detect new version of Image/Flarum and upgrade it
 * Log Roation
 * Alpine 3.10 Base w/Nginx and PHP-FPM 7.3
 
-This Container uses [tiredofit/alpine:3.10](https://hub.docker.com/r/tiredofit/alpine) as a base.
+This Container uses [tiredofit/alpine:3.10](https://hub.docker.com/r/tiredofit/alpine) and [tiredofit/nginx-php-fpm:7.3](https://hub.docker.com/r/tiredofit/nginx-php-fpm) as a base.
         
 [Changelog](CHANGELOG.md)
 
