@@ -1,3 +1,15 @@
+## 1.2.1 2019-12-18 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Add environment variables to support dynamic webroot,user,group
+
+
+## 1.2.0 2019-12-04 <dave at tiredofit dot ca>
+
+   ### Added
+      - Refactor Image to support new tiredofit/nginx-php-fpm image
+
+
 ## 1.1.1 2019-09-21 <dave at tiredofit dot ca>
 
 * Add showing available updates to extension tool

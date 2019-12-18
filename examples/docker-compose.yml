@@ -42,10 +42,10 @@ services:
     volumes:
       - ./db:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=flarum
-      - MYSQL_USER=flarum
-      - MYSQL_PASSWORD=flarum
+      - ROOT_PASS=password
+      - DB_NAME=flarum
+      - DB_USER=flarum
+      - DB_PASS=flarum
 
       - ZABBIX_HOSTNAME=flarum-db
     networks:
