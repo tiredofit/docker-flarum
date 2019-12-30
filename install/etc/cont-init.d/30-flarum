@@ -1,12 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-silent() {
-  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
-    "$@"
-  else
-    "$@" > /dev/null 2>&1
-  fi
-}
+source /assets/functions/*
+PROCESS_NAME="flarum"
 
 while [ ! -f /tmp/state/init-20-php-fpm ]
 do
@@ -15,7 +10,6 @@ done
 
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
-    set -x
     DEBUG_MODE=true
 else
     DEBUG_MODE=false
@@ -33,48 +27,14 @@ DB_PREFIX=${DB_PREFIX:-"flarum_"}
 SITE_TITLE=${SITE_TITLE:-"Flarum"}
 
 ### Sanity Test
-if [ ! -n "$DB_HOST" ]; then
-    echo '** [flarum] ERROR: No Database Host Entered! '
-    exit 1
-fi
-
-if [ ! -n "$DB_NAME" ]; then
-    echo '** [flarum] ERROR: No Database Pass Entered! '
-    exit 1
-fi
-
-if [ ! -n "$DB_USER" ]; then
-    echo '** [flarum] ERROR: No Database User Entered! '
-    exit 1
-fi
-
-if [ ! -n "$DB_PASS" ]; then
-    echo '** [flarum] ERROR: No Database Pass Entered!'
-    exit 1
-fi
-
-if [ ! -n "$SITE_URL" ]; then
-    echo '** [flarum] ERROR: No SITE_URL Entered!'
-    exit 1
-fi
-
-### Make sure that DB is accessible
-while true; do
-  mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
-  out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
-  echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
-  if [ $? -eq 0 ]; then
-      echo "** [flarum] MariaDB Server '"$DB_HOST"' is available"
-      break
-  fi
-  echo "** [flarum] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
-  sleep 5
-done
+sanity_db
+sanity_var SITE_URL "Site URL"
+db_check mariadb
 
 ### Check to see if this is a new install
 $mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
 if [ $? -gt 0 ]; then
-  	 echo "** [flarum] Starting a clean Flarum installation. This may take 1-10 minutes.."
+  	 print_warn "Starting a clean Flarum installation. This may take 1-10 minutes.."
 
      if [ ! -d "/data/assets" ]; then
         cp -R /assets/install/assets /data
@@ -110,7 +70,7 @@ if [ $? -gt 0 ]; then
      ln -s /data/composer.json ${NGINX_WEBROOT}/composer.json
      rm -rf ${NGINX_WEBROOT}/config.yml
   else
-  	 echo "** [flarum] Detected previous installation"
+  	 print_warn "Detected previous installation"
      rm -rf ${NGINX_WEBROOT}/config.yml
      ### Write Configuration File
      sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" ${NGINX_WEBROOT}/config.php
@@ -125,7 +85,7 @@ if [ $? -gt 0 ]; then
      sed -i -e "s|<SITE_URL>|${SITE_URL}|g" ${NGINX_WEBROOT}/config.php
      ### Upgrade Check
      if [ "$FLARUM_VERSION" != `head -n 1 /data/.version | awk '{print $1'}` ]; then
-        echo '** [flarum] Detected New Version from original installation, attempting automatic upgrade.. This may take a while..'
+        print_warn "Detected New Version from original installation, attempting automatic upgrade.. This may take a while.."
         silent php ${NGINX_WEBROOT}/flarum migrate
         silent php ${NGINX_WEBROOT}/flarum cache:clear
         echo $FLARUM_VERSION 'upgraded on '`date` | cat - /data/.version > /tmp/.version && mv /tmp/.version /data/.version
@@ -140,31 +100,31 @@ if [ $? -gt 0 ]; then
      silent php ${NGINX_WEBROOT}/flarum cache:clear
      mkdir -p ${NGINX_WEBROOT}/extensions/.cache
      if [ -f "${NGINX_WEBROOT}/extensions/install" ]; then
-        echo "** [flarum] Installing extensions.. This may take a while to get prepared.."
+        print_warn "Installing extensions.. This may take a while to get prepared"
         cd ${NGINX_WEBROOT}
         silent composer outdated > /tmp/composer-updates
         while read extension; do
           if [ `cat ${NGINX_WEBROOT}/composer.json | grep ${extension} | awk '{print $1'}` ]; then
-              echo "** [flarum] Extensions: Found "${extension}" however it is already installed..."
+              print_warn "Extensions: Found "${extension}" however it is already installed..."
               if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                  if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
                    if [ "$EXTENSIONS_AUTO_UPDATE" = "FALSE" ] || [ "$EXTENSIONS_AUTO_UPDATE" = "false" ]; then
-                      echo "** [flarum] Extensions: Auto Updating of Extensions Disabled"
-                      echo "** [flarum] Extensions: Newer Version of "${extension}" found - Please update manually"
+                      print_warn "Extensions: Auto Updating of Extensions Disabled"
+                      print_warn "Extensions: Newer Version of '${extension}' found - Please update manually"
                    else
-                      echo "** [flarum] Extensions: Newer version of "${extension}" found. Upgrading.."
+                      print_warn "Extensions: Newer version of '${extension}' found. Upgrading.."
                       silent composer update ${extension}
                       silent php ${NGINX_WEBROOT}/flarum migrate
                    fi
                  fi
                fi
           else
-          echo "** [flarum] Extensions: Installing "${extension}
+          print_warn "Extensions: Installing "${extension}
           silent composer require ${extension}
                 fi
         done < ${NGINX_WEBROOT}/extensions/install
         rm -rf /tmp/composer-updates
-        echo "** [flarum] Finished installing extensions"
+        print_warn "Finished installing extensions"
     fi
 fi
 
@@ -172,7 +132,7 @@ silent php ${NGINX_WEBROOT}/flarum cache:clear
 
 ### Custom File Support
 if [ -d /assets/custom ] ; then
-    echo "** [flarum] Custom Files Found, Copying over top of Master"
+    print_warn "Custom Files Found, Copying over top of Master"
     cp -R /assets/custom/* ${NGINX_WEBROOT}
     chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT}
 fi
@@ -180,7 +140,6 @@ fi
 chown -R ${NGINX_USER}:${NGINX_GROUP} /data
 chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT}
 
-echo "** [flarum] Container Initialized - Now starting Web Services - Visit '${SITE_URL}' to proceed"
+print_warn "Container Initialized - Now starting Web Services - Visit '${SITE_URL}' to proceed"
 
-mkdir -p /tmp/state
-touch /tmp/state/init-30-flarum
+liftoff
