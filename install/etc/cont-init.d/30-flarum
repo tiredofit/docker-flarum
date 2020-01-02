@@ -1,12 +1,8 @@
 #!/usr/bin/with-contenv bash
 
-source /assets/functions/*
+for s in /assets/functions/*; do source $s; done
 PROCESS_NAME="flarum"
-
-while [ ! -f /tmp/state/init-20-php-fpm ]
-do
-  sleep 1
-done
+check_service_initialized init 20-php-fpm
 
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
@@ -70,7 +66,7 @@ if [ $? -gt 0 ]; then
      ln -s /data/composer.json ${NGINX_WEBROOT}/composer.json
      rm -rf ${NGINX_WEBROOT}/config.yml
   else
-  	 print_warn "Detected previous installation"
+  	 print_notice "Detected previous installation"
      rm -rf ${NGINX_WEBROOT}/config.yml
      ### Write Configuration File
      sed -i -e "s|<DEBUG_MODE>|${DEBUG_MODE}|g" ${NGINX_WEBROOT}/config.php
@@ -100,31 +96,31 @@ if [ $? -gt 0 ]; then
      silent php ${NGINX_WEBROOT}/flarum cache:clear
      mkdir -p ${NGINX_WEBROOT}/extensions/.cache
      if [ -f "${NGINX_WEBROOT}/extensions/install" ]; then
-        print_warn "Installing extensions.. This may take a while to get prepared"
+        print_info "Installing extensions.. This may take a while to get prepared"
         cd ${NGINX_WEBROOT}
         silent composer outdated > /tmp/composer-updates
         while read extension; do
           if [ `cat ${NGINX_WEBROOT}/composer.json | grep ${extension} | awk '{print $1'}` ]; then
-              print_warn "Extensions: Found "${extension}" however it is already installed..."
+              print_notice "Extensions: Found "${extension}" however it is already installed..."
               if [[ `cat /tmp/composer-updates | grep ${extension} | awk '{print $1'}` ]]; then
                  if [ `cat /tmp/composer-updates | grep ${extension} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${extension} | awk '{print $4'}` ]; then
                    if [ "$EXTENSIONS_AUTO_UPDATE" = "FALSE" ] || [ "$EXTENSIONS_AUTO_UPDATE" = "false" ]; then
                       print_warn "Extensions: Auto Updating of Extensions Disabled"
                       print_warn "Extensions: Newer Version of '${extension}' found - Please update manually"
                    else
-                      print_warn "Extensions: Newer version of '${extension}' found. Upgrading.."
+                      print_notice "Extensions: Newer version of '${extension}' found. Upgrading.."
                       silent composer update ${extension}
                       silent php ${NGINX_WEBROOT}/flarum migrate
                    fi
                  fi
                fi
           else
-          print_warn "Extensions: Installing "${extension}
+          print_notice "Extensions: Installing "${extension}
           silent composer require ${extension}
                 fi
         done < ${NGINX_WEBROOT}/extensions/install
         rm -rf /tmp/composer-updates
-        print_warn "Finished installing extensions"
+        print_notice "Finished installing extensions"
     fi
 fi
 
