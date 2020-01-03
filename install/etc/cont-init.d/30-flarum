@@ -25,7 +25,7 @@ SITE_TITLE=${SITE_TITLE:-"Flarum"}
 ### Sanity Test
 sanity_db
 sanity_var SITE_URL "Site URL"
-db_check mariadb
+db_ready mariadb
 
 ### Check to see if this is a new install
 $mysqlcmd -e "use "$DB_NAME"; SELECT * FROM "$DB_PREFIX"migrations;" > /dev/null 2>&1
