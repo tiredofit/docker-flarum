@@ -1,3 +1,8 @@
+## 1.4.0 2020-01-05 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update to flarum 0.1.0-beta 11
+
 ## 1.3.1 2020-01-02 <dave at tiredofit dot ca>
 
    ### Changed

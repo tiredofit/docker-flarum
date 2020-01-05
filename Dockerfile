@@ -2,7 +2,7 @@ FROM tiredofit/nginx-php-fpm:7.3
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Defaults
-ENV FLARUM_VERSION=0.1.0-beta.10 \
+ENV FLARUM_VERSION=0.1.0-beta.11 \
     NGINX_UPLOAD_MAX_SIZE=2G \
     PHP_UPLOAD_MAX_SIZE=2G \
     PHP_TIMEOUT=900 \
