@@ -1,3 +1,9 @@
+## 1.4.2 2020-04-08 <dave at tiredofit dot ca>
+
+   ### Added
+      - Add PHP FileInfo extension for extension install issues
+
+
 ## 1.4.1 2020-04-08 <dave at tiredofit dot ca>
 
    ### Added
