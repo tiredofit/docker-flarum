@@ -10,15 +10,15 @@
 
 This will build a container for [flarum](https://www.flarum.org) - A PHP Based forum software. Upon starting this image it will give you a turn-key message board for communicating to groups, peers, or the public. 
 
-* Latest release Version 0.10 beta 10
+* Latest release Version 0.10 beta 12
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
 * Automatically install and keep up to date plugins from Github/Flagrow/Elsewhere
 * Automatically detect new version of Image/Flarum and upgrade it
 * Log Roation
-* Alpine 3.10 Base w/Nginx and PHP-FPM 7.3
+* Alpine 3.11 Base w/Nginx and PHP-FPM 7.3
 
-This Container uses [tiredofit/alpine:3.10](https://hub.docker.com/r/tiredofit/alpine) as a base.
+This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/alpine) as a base.
         
 [Changelog](CHANGELOG.md)
 

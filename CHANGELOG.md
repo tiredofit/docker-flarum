@@ -1,3 +1,10 @@
+## 1.4.1 2020-04-08 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update to Flarum 0.10-beta12
+      - Cleanup Image to support changes in tiredofit/nginx-php-fpm base image
+
+
 ## 1.4.0 2020-01-05 <dave at tiredofit dot ca>
 
    ### Added

@@ -14,20 +14,20 @@ if [ "$3" = "--debug" ]; then
 fi
 
 init() {
-    mkdir -p /www/html/extensions/.cache
-    cd /www/html
+    mkdir -p ${NGINX_WEBROOT}/extensions/.cache
+    cd ${NGINX_WEBROOT}
 }
 
 cleanup() {
     echo "**** [flarum-extension-tool] Cleaning up"
-    silent php /www/html/flarum cache:clear
-    chown -R nginx:www-data /www/html
-    chown -R nginx:www-data /data
+    silent php ${NGINX_WEBROOT}/flarum cache:clear
+    chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT}
+    chown -R ${NGINX_USER}:${NGINX_GROUP} /data
     rm -rf /tmp/composer-updates
 }
 
 check_if_installed() {
-    cat /www/html/composer.json | grep $1 -c
+    cat ${NGINX_WEBROOT}/composer.json | grep $1 -c
 }
 
 
@@ -72,7 +72,7 @@ case "$1" in
                 if [ `cat /tmp/composer-updates | grep ${2} | awk '{print $2'}` != `cat /tmp/composer-updates | grep ${2} | awk '{print $4'}` ]; then    
                     echo "**** [flarum-extension-tool] Newer version of ${2} found. Upgrading.."
                     silent composer update ${2}
-                    silent php /www/html/flarum migrate
+                    silent php ${NGINX_WEBROOT}/flarum migrate
                     echo "**** [flarum-extension-tool] Update of package ${2} completed."
                    fi
            else

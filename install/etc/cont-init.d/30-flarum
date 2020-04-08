@@ -11,7 +11,6 @@ else
     DEBUG_MODE=false
 fi
  
-
 ### Set Defaults
 ADMIN_EMAIL=${ADMIN_EMAIL:-"admin@example.com"}
 ADMIN_PASS=${ADMIN_PASS:-"flarum"}
