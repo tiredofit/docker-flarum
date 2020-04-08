@@ -57,7 +57,7 @@ docker pull tiredofit/flarum:(imagetag)
 ```
 The following image tags are available:
 
-* `latest` - Flarum 0.10beta 10
+* `latest` - Flarum 0.10beta 12
 
 You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
 
