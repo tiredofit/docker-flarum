@@ -1,3 +1,9 @@
+## 1.5.0 2020-06-08 <dave at tiredofit dot ca>
+
+   ### Added
+      - Changes to support tiredofit/alpine:5.0.0 base
+
+
 ## 1.4.2 2020-04-08 <dave at tiredofit dot ca>
 
    ### Added
