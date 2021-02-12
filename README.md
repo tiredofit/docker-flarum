@@ -6,7 +6,7 @@
 [![Docker Stars](https://img.shields.io/docker/stars/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/flarum.svg)](https://microbadger.com/images/tiredofit/flarum)
 
-# Introduction
+## Introduction
 
 This will build a container for [flarum](https://www.flarum.org) - A PHP Based forum software. Upon starting this image it will give you a turn-key message board for communicating to groups, peers, or the public. 
 
@@ -22,11 +22,11 @@ This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/a
         
 [Changelog](CHANGELOG.md)
 
-# Authors
+## Authors
 
 - [Dave Conroy](https://github.com/tiredofit)
 
-# Table of Contents
+## Table of Contents
 
 - [Introduction](#introduction)
     - [Changelog](CHANGELOG.md)
@@ -41,13 +41,13 @@ This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/a
     - [Shell Access](#shell-access)
    - [References](#references)
 
-# Prerequisites
+## Prerequisites
 
 This image assumes that you are using a reverse proxy such as [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) and optionally the [Let's Encrypt Proxy Companion @ https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) or [tiredofit/traefik](https://github.com/tiredofit/docker-traefik) in order to serve your pages. However, it will run just fine on it's own if you map appropriate ports.
 
 You will also need an external MySQL/MariaDB Container
 
-# Installation
+## Installation
 
 Automated builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/flarum) and is the recommended method of installation.
 
@@ -62,7 +62,7 @@ The following image tags are available:
 You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
 
 
-# Quick Start
+### Quick Start
 
 * The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working [docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use.
 
@@ -74,7 +74,7 @@ You can also visit the image tags section on Docker hub to pull a version that f
 
 Login to the web server and enter in your admin username, admin password, and email address and start configuring the system!
 
-# Configuration
+## Configuration
 
 ### Data-Volumes
 
@@ -152,10 +152,10 @@ For example, if you wished to install `fof/drafts` then here is a command to do 
 
 The rest of the options are self explanatory.
 
-# Maintenance
+## Maintenance
 
 
-#### Shell Access
+### Shell Access
 
 For debugging and maintenance purposes you may want access the containers shell. 
 
@@ -163,6 +163,6 @@ For debugging and maintenance purposes you may want access the containers shell.
 docker exec -it (whatever your container name is e.g. flarum) bash
 ```
 
-# References
+## References
 
 * https://flarum.org/

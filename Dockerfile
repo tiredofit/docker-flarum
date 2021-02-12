@@ -1,8 +1,8 @@
-FROM tiredofit/nginx-php-fpm:7.3
+FROM tiredofit/nginx-php-fpm:7.4
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Defaults
-ENV FLARUM_VERSION=0.1.0-beta.12 \
+ENV FLARUM_VERSION=0.1.0-beta.15 \
     NGINX_UPLOAD_MAX_SIZE=2G \
     NGINX_WEBROOT="/www/flarum" \
     PHP_UPLOAD_MAX_SIZE=2G \
@@ -20,14 +20,12 @@ RUN set -x && \
     apk upgrade && \
     \
     ## Fetch Flarum
-    composer global require hirak/prestissimo && \
+    #composer global require hirak/prestissimo && \
     mkdir -p ${NGINX_WEBROOT} && \
     chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT} && \
     mkdir -p /tmp/flarum && \
-    mv /etc/php7/conf.d/*diseval* /tmp/flarum && \
     COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum ${NGINX_WEBROOT} v$FLARUM_VERSION --stability=beta && \
     composer clear-cache && \
-    mv /tmp/flarum/* /etc/php7/conf.d/ && \
     \
     ## Data Persistence Setup
     mkdir /assets/install && \
@@ -36,9 +34,9 @@ RUN set -x && \
     mkdir -p /assets/install/extensions && \
     rm -rf ${NGINX_WEBROOT}/public/assets && \
     rm -rf ${NGINX_WEBROOT}/storage && \
-    ln -s /data/assets ${NGINX_WEBROOT}/public/assets && \
-    ln -s /data/storage ${NGINX_WEBROOT}/storage && \
-    ln -s /data/extensions ${NGINX_WEBROOT}/extensions && \
+    ln -sf /data/assets ${NGINX_WEBROOT}/public/assets && \
+    ln -sf /data/storage ${NGINX_WEBROOT}/storage && \
+    ln -sf /data/extensions ${NGINX_WEBROOT}/extensions && \
     \
     ## Cleanup
     rm -rf /var/cache/apk/* /tmp/*

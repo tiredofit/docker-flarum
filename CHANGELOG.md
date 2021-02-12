@@ -1,3 +1,10 @@
+## 1.5.1 2021-02-11 <dave at tiredofit dot ca>
+
+   ### Added
+      - Flarum 0.10-beta.15
+      - PHP 7.4
+
+
 ## 1.5.0 2020-06-08 <dave at tiredofit dot ca>
 
    ### Added
