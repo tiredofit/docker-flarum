@@ -1,7 +1,6 @@
 
 # hub.docker.com/r/tiredofit/flarum
 
-[![Build Status](https://img.shields.io/docker/build/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Stars](https://img.shields.io/docker/stars/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/flarum.svg)](https://microbadger.com/images/tiredofit/flarum)
