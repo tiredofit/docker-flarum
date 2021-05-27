@@ -1,11 +1,11 @@
 
-# hub.docker.com/r/tiredofit/flarum
+# github.com/tiredofit/docker-flarum
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Stars](https://img.shields.io/docker/stars/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
 [![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/flarum.svg)](https://microbadger.com/images/tiredofit/flarum)
 
-## Introduction
+## About
 
 This will build a container for [flarum](https://www.flarum.org) - A PHP Based forum software. Upon starting this image it will give you a turn-key message board for communicating to groups, peers, or the public. 
 
@@ -21,7 +21,7 @@ This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/a
         
 [Changelog](CHANGELOG.md)
 
-## Authors
+## Maintainer
 
 - [Dave Conroy](https://github.com/tiredofit)
 
@@ -40,7 +40,7 @@ This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/a
     - [Shell Access](#shell-access)
    - [References](#references)
 
-## Prerequisites
+## Prerequisites and Assumptions
 
 This image assumes that you are using a reverse proxy such as [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) and optionally the [Let's Encrypt Proxy Companion @ https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) or [tiredofit/traefik](https://github.com/tiredofit/docker-traefik) in order to serve your pages. However, it will run just fine on it's own if you map appropriate ports.
 
@@ -75,7 +75,7 @@ Login to the web server and enter in your admin username, admin password, and em
 
 ## Configuration
 
-### Data-Volumes
+### Persistent Storage
 
 The container supports data persistence and during Dockerfile Build creates symbolic links for `/www/html/composer.json`, `/www/html/public/assets`, `/www/html/storage`. Upon startup configuration files are copied and generated to support portability.
 
