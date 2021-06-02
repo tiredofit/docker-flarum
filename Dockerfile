@@ -2,7 +2,7 @@ FROM tiredofit/nginx-php-fpm:8.0
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Defaults
-ENV FLARUM_VERSION=1.0.0 \
+ENV FLARUM_VERSION=1.0.1 \
     NGINX_UPLOAD_MAX_SIZE=2G \
     NGINX_WEBROOT="/www/flarum" \
     PHP_UPLOAD_MAX_SIZE=2G \

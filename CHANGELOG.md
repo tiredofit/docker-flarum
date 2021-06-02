@@ -1,3 +1,9 @@
+## 1.6.1 2021-06-02 <dave at tiredofit dot ca>
+
+   ### Added
+      - Flarum 1.0.1
+
+
 ## 1.6.0 2021-05-27 <dave at tiredofit dot ca>
 
    ### Added
