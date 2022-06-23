@@ -2,9 +2,8 @@ FROM docker.io/tiredofit/nginx-php-fpm:8.0
 LABEL maintainer="Dave Conroy (github.com/tiredofit)"
 
 ### Defaults
-ENV FLARUM_VERSION=1.0.2 \
+ENV FLARUM_VERSION=1.0.3 \
     NGINX_UPLOAD_MAX_SIZE=2G \
-    NGINX_SITE_ENABLED=flarum \
     NGINX_WEBROOT="/www/flarum" \
     PHP_UPLOAD_MAX_SIZE=2G \
     PHP_TIMEOUT=900 \

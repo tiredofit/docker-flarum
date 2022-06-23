@@ -16,7 +16,7 @@ services:
       - ./data:/data
       - ./logs/:/www/logs
     environment:
-      - ZABBIX_HOSTNAME=flarum-app
+      - CONTAINER_NAME=flarum-app
 
       - ADMIN_USER=admin
       - ADMIN_PASS=flarum
@@ -47,7 +47,7 @@ services:
       - DB_USER=flarum
       - DB_PASS=flarum
 
-      - ZABBIX_HOSTNAME=flarum-db
+      - CONTAINER_NAME=flarum-db
     networks:
       - services
     restart: always
@@ -60,7 +60,7 @@ services:
     volumes:
       - ./dbbackup:/backup
     environment:
-      - ZABBIX_HOSTNAME=flarum-db-backup
+      - CONTAINER_NAME=flarum-db-backup
       - DB_HOST=flarum-db
       - DB_TYPE=mariadb
       - DB_NAME=flarum
