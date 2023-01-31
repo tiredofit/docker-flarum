@@ -1,120 +1,136 @@
-
 # github.com/tiredofit/docker-flarum
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
-[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/flarum.svg)](https://hub.docker.com/r/tiredofit/flarum)
-[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/flarum.svg)](https://microbadger.com/images/tiredofit/flarum)
-
+[![GitHub release](https://img.shields.io/github/v/tag/tiredofit/docker-flarum?style=flat-square)](https://github.com/tiredofit/docker-flarum/releases/latest)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tiredofit/docker-flarummain.yml?branch=main&style=flat-square)](https://github.com/tiredofit/docker-flarum.git/actions)
+[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/flarum.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/tiredofit/flarum/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/flarum.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/tiredofit/flarum/)
+[![Become a sponsor](https://img.shields.io/badge/sponsor-tiredofit-181717.svg?logo=github&style=flat-square)](https://github.com/sponsors/tiredofit)
+[![Paypal Donate](https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal&style=flat-square)](https://www.paypal.me/tiredofit)
 ## About
 
-This will build a container for [flarum](https://www.flarum.org) - A PHP Based forum software. Upon starting this image it will give you a turn-key message board for communicating to groups, peers, or the public. 
+This will build a Docker Image for [Flarum](https://www.flarum.org/). A web based discussion forum. It will:
 
-* Latest release Version 0.10 beta 12
 * Supports Data Persistence
-* Fail2Ban installed to block brute force attacks
-* Automatically install and keep up to date plugins from Github/Flagrow/Elsewhere
 * Automatically detect new version of Image/Flarum and upgrade it
-* Log Roation
-* Alpine 3.11 Base w/Nginx and PHP-FPM 7.3
-
-This Container uses [tiredofit/alpine:3.11](https://hub.docker.com/r/tiredofit/alpine) as a base.
-        
-[Changelog](CHANGELOG.md)
 
 ## Maintainer
 
-- [Dave Conroy](https://github.com/tiredofit)
+- [Dave Conroy](https://github.com/tiredofit/)
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-    - [Changelog](CHANGELOG.md)
-- [Prerequisites](#prerequisites)
+- [About](#about)
+- [Maintainer](#maintainer)
+- [Table of Contents](#table-of-contents)
+- [Prerequisites and Assumptions](#prerequisites-and-assumptions)
 - [Installation](#installation)
-- [Quick Start](#quick-start)
+  - [Build from Source](#build-from-source)
+  - [Prebuilt Images](#prebuilt-images)
+    - [Multi Architecture](#multi-architecture)
 - [Configuration](#configuration)
-    - [Data Volumes](#data-volumes)
-    - [Environment Variables](#environmentvariables)   
-    - [Networking](#networking)
+  - [Quick Start](#quick-start)
+  - [Persistent Storage](#persistent-storage)
+  - [Environment Variables](#environment-variables)
+    - [Base Images used](#base-images-used)
 - [Maintenance](#maintenance)
-    - [Shell Access](#shell-access)
-   - [References](#references)
+  - [Shell Access](#shell-access)
+  - [Installing Plugins and Extensions](#installing-plugins-and-extensions)
+- [Support](#support)
+  - [Usage](#usage)
+  - [Bugfixes](#bugfixes)
+  - [Feature Requests](#feature-requests)
+  - [Updates](#updates)
+- [License](#license)
+- [Maintenance](#maintenance-1)
+  - [Shell Access](#shell-access-1)
+- [References](#references)
 
 ## Prerequisites and Assumptions
-
-This image assumes that you are using a reverse proxy such as [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) and optionally the [Let's Encrypt Proxy Companion @ https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) or [tiredofit/traefik](https://github.com/tiredofit/docker-traefik) in order to serve your pages. However, it will run just fine on it's own if you map appropriate ports.
-
-You will also need an external MySQL/MariaDB Container
+*  Assumes you are using some sort of SSL terminating reverse proxy such as:
+   *  [Traefik](https://github.com/tiredofit/docker-traefik)
+   *  [Nginx](https://github.com/jc21/nginx-proxy-manager)
+   *  [Caddy](https://github.com/caddyserver/caddy)
 
 ## Installation
 
-Automated builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/flarum) and is the recommended method of installation.
+### Build from Source
+Clone this repository and build the image with `docker build <arguments> (imagename) .`
 
+### Prebuilt Images
+Builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/flarum) and is the recommended method of installation.
 
 ```bash
 docker pull tiredofit/flarum:(imagetag)
 ```
-The following image tags are available:
 
-* `latest` - Flarum 0.10beta 12
+The following image tags are available along with their tagged release based on what's written in the [Changelog](CHANGELOG.md):
 
-You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
+| PHP Version | OS     | Tag       |
+| ----------- | ------ | --------- |
+| 8.1.x       | Alpine | `:latest` |
+
+#### Multi Architecture
+Images are built primarily for `amd64` architecture, and may also include builds for `arm/v7`, `arm64` and others. These variants are all unsupported. Consider [sponsoring](https://github.com/sponsors/tiredofit) my work so that I can work with various hardware. To see if this image supports multiple architecures, type `docker manifest (image):(tag)`
 
 
+## Configuration
 ### Quick Start
 
 * The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working [docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use.
 
 * Set various [environment variables](#environment-variables) to understand the capabilities of this image.
 * Map [persistent storage](#data-volumes) for access to configuration and data files for backup.
-* Make [networking ports](#networking) available for public access if necessary
-
-*The first boot can take from 1 minutes - 10 minutes depending on your internet connection and processor to import database schemas*
-
-Login to the web server and enter in your admin username, admin password, and email address and start configuring the system!
-
-## Configuration
 
 ### Persistent Storage
 
-The container supports data persistence and during Dockerfile Build creates symbolic links for `/www/html/composer.json`, `/www/html/public/assets`, `/www/html/storage`. Upon startup configuration files are copied and generated to support portability.
-
 The following directories are used for configuration and can be mapped for persistent storage.
 
-| Directory    | Description                                                 |
-|--------------|-------------------------------------------------------------|
-|  `/data`    | For Data Persistence, map this folder to somewhere on your host |
-|  `/assets/custom` | *OPTIONAL* - If you would like to overwrite some files in the container, put them here following the same folder structure for anything underneath the /www/html directory |
+| Directory   | Description                |
+| ----------- | -------------------------- |
+| `/data`     | Persistent Storage         |
+| `/www/logs` | Nginx and php-fpm logfiles |
 
 ### Environment Variables
 
-Along with the Environment Variables from the [Base image](https://hub.docker.com/r/tiredofit/alpine) + [Web Image](https://hub.docker.com/r/tiredofit/nginx-php-fpm) below is the complete list of available options that can be used to customize your installation.
+#### Base Images used
 
-| Parameter        | Description                            |
-|------------------|----------------------------------------|
-| `ADMIN_EMAIL` | Email address for the Administrator - Default `admin@example.com` |
-| `ADMIN_USER` | Username for the Administrator - Default `admin` |
-| `ADMIN_PASS` | Password for the Administrator - Default `flarum` |
-| `ADMIN_PATH` | What folder to access admin panel - Default `admin` |
-| `API_PATH` | What folder to access API - Default `api` |
-| `DB_HOST` | Host or container name of MySQL Server e.g. `flarum-db` |
-| `DB_PORT` | MySQL Port - Default `3306` |
-| `DB_NAME` | MySQL Database name e.g. `asterisk` |
-| `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
-| `DB_PASS` | MySQL Password for above Database e.g. `password`|
-| `DB_PREFIX` | MySQL Prefix for `DB_NAME` - Default `flarum_`|
-| `DEBUG_MODE` | Enable Debug Mode (verbosity) for the container installation/startup and in application - `TRUE` / `FALSE` - Default `FALSE` |
-| `EXTENSIONS_AUTO_UPDATE` | Automatically update extensions on container startup `TRUE` / `FALSE` - Default `TRUE` |
-| `SITE_TITLE` | The Title of the Website - Default `Flarum` |
-| `SITE_URL` | The Full site URL of the installation e.g. `https://flarum.example.com` |
+This image relies on an [Alpine Linux](https://hub.docker.com/r/tiredofit/alpine) base image that relies on an [init system](https://github.com/just-containers/s6-overlay) for added capabilities. Outgoing SMTP capabilities are handlded via `msmtp`. Individual container performance monitoring is performed by [zabbix-agent](https://zabbix.org). Additional tools include: `bash`,`curl`,`less`,`logrotate`,`nano`,`vim`.
 
-### Networking
+Be sure to view the following repositories to understand all the customizable options:
 
-The following ports are exposed.
+| Image                                                         | Description                            |
+| ------------------------------------------------------------- | -------------------------------------- |
+| [OS Base](https://github.com/tiredofit/docker-alpine/)        | Customized Image based on Alpine Linux |
+| [Nginx](https://github.com/tiredofit/docker-nginx/)           | Nginx webserver                        |
+| [PHP-FPM](https://github.com/tiredofit/docker-nginx-php-fpm/) | PHP Interpreter                        |
 
-| Port      | Description |
-|-----------|-------------|
-| `80`      | HTTP        |
+| Parameter                | Description                                                                            | Default         |
+| ------------------------ | -------------------------------------------------------------------------------------- | --------------- |
+| `ADMIN_EMAIL`            | Email address for the Administrator - Needed to run                                    |                 |
+| `ADMIN_USER`             | Username for the Administrator                                                         | `admin`         |
+| `ADMIN_PASS`             | Password for the Administrator - Needed to run                                         |                 |
+| `ADMIN_PATH`             | What folder to access admin panel                                                      | `admin`         |
+| `API_PATH`               | What folder to access API                                                              | `api`           |
+| `DB_HOST`                | MariaDB external container hostname (e.g. flarum-db)                                   |                 |
+| `DB_NAME`                | MariaDB database name i.e. (e.g. flarum)                                               |                 |
+| `DB_USER`                | MariaDB username for database (e.g. flarum)                                            |                 |
+| `DB_PASS`                | MariaDB password for database (e.g. userpassword)                                      |                 |
+| `DB_PREFIX`              | MariaDB Prefix for `DB_NAME`                                                           | `flarum_`       |
+| `EXTENSIONS_AUTO_UPDATE` | Automatically update extensions on container startup `TRUE` / `FALSE`                  | `TRUE`          |
+| `SITE_TITLE`             | The title of the Website                                                               | `Docker Flarum` |
+| `SITE_URL`               | The Full site URL of the installation e.g. `flarum.example.com` - Required for Install |                 |
+
+
+* * *
+## Maintenance
+
+### Shell Access
+
+For debugging and maintenance purposes you may want access the containers shell.
+
+```bash
+docker exec -it (whatever your container name is) bash
+```
 
 ### Installing Plugins and Extensions
 
@@ -123,16 +139,16 @@ The following ports are exposed.
 Example:
 
 ````
-[/var/local/data/flarum] 1 $ cd data
-[/var/local/data/flarum/data] $ ls
+[/data/flarum] 1 $ cd data
+[/data/flarum/data] $ ls
 assets  composer.json  extensions  storage
-[/var/local/data/flarum/data] $ cd extensions/
-[/var/local/data/flarum/data/extensions] $ ls
-install
-[/var/local/data/flarum/data/extensions] $ cat install
+[/data/flarum/data] $ cd extensions/
+[/data/flarum/data/extensions] $ ls
+list
+[/data/flarum/data/extensions] $ cat list
 flagrow/upload
 michaelbelgium/flarum-discussion-views
-[/var/local/data/flarum/data/extensions] $ 
+[/data/flarum/data/extensions] $
 ````
 
 Alternatively, if you wish to install an extension while the container is running without restarting, you can use the tool located in `/usr/sbin/extension-tool`
@@ -151,12 +167,30 @@ For example, if you wished to install `fof/drafts` then here is a command to do 
 
 The rest of the options are self explanatory.
 
+
+## Support
+
+These images were built to serve a specific need in a production environment and gradually have had more functionality added based on requests from the community.
+### Usage
+- The [Discussions board](../../discussions) is a great place for working with the community on tips and tricks of using this image.
+- Consider [sponsoring me](https://github.com/sponsors/tiredofit) personalized support.
+### Bugfixes
+- Please, submit a [Bug Report](issues/new) if something isn't working as expected. I'll do my best to issue a fix in short order.
+
+### Feature Requests
+- Feel free to submit a feature request, however there is no guarantee that it will be added, or at what timeline.
+- Consider [sponsoring me](https://github.com/sponsors/tiredofit) regarding development of features.
+
+### Updates
+- Best effort to track upstream changes, More priority if I am actively using the image in a production environment.
+- Consider [sponsoring me](https://github.com/sponsors/tiredofit) for up to date releases.
+
+## License
+MIT. See [LICENSE](LICENSE) for more details.
 ## Maintenance
-
-
 ### Shell Access
 
-For debugging and maintenance purposes you may want access the containers shell. 
+For debugging and maintenance purposes you may want access the containers shell.
 
 ```bash
 docker exec -it (whatever your container name is e.g. flarum) bash
@@ -164,4 +198,5 @@ docker exec -it (whatever your container name is e.g. flarum) bash
 
 ## References
 
-* https://flarum.org/
+* https://www.flarum.org
+

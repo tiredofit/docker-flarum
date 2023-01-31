@@ -1,8 +1,7 @@
-FROM docker.io/tiredofit/nginx-php-fpm:8.0
+FROM docker.io/tiredofit/nginx-php-fpm:8.1
 LABEL maintainer="Dave Conroy (github.com/tiredofit)"
 
-### Defaults
-ENV FLARUM_VERSION=1.0.2 \
+ENV FLARUM_VERSION=1.4.0 \
     NGINX_UPLOAD_MAX_SIZE=2G \
     NGINX_SITE_ENABLED=flarum \
     NGINX_WEBROOT="/www/flarum" \
@@ -13,15 +12,12 @@ ENV FLARUM_VERSION=1.0.2 \
     PHP_ENABLE_FILEINFO=TRUE \
     PHP_ENABLE_TOKENIZER=TRUE \
     PHP_ENABLE_ZIP=TRUE \
-    CONTAINER_NAME=flarum-app
+    IMAGE_NAME="tiredofit/flarum" \
+    IMAGE_REPO_URL="https://github.com/tiredofit/docker-flarum/"
 
-### Perform Installation
 RUN set -x && \
     apk update && \
     apk upgrade && \
-    \
-    ## Fetch Flarum
-    #composer global require hirak/prestissimo && \
     mkdir -p ${NGINX_WEBROOT} && \
     chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT} && \
     mkdir -p /tmp/flarum && \
@@ -44,5 +40,5 @@ RUN set -x && \
 
 ENV COMPOSER_CACHE_DIR=${NGINX_WEBROOT}/extensions/.cache
 
-ADD install /
+COPY install /
 

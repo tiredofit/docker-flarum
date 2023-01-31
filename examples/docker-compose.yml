@@ -1,21 +1,20 @@
-version: '3.7'
+version: '2.4'
 services:
-  
+
   flarum-app:
     image: tiredofit/flarum
     container_name: flarum-app
     labels:
       - traefik.enable=true
-      - traefik.public.backend=flarum-app
-      - traefik.public.port=80
-      - traefik.public.frontend.rule=Host:flarum.example.com
-      - traefik.docker.network=proxy
+      - traefik.http.routers.flarum.rule=Host(`flarum.example.com`)
+      - traefik.http.services.flarum.loadbalancer.server.port=80
     links:
       - flarum-db
     volumes:
       - ./data:/data
       - ./logs/:/www/logs
     environment:
+      - TIMEZONE=America/Vancouver
       - CONTAINER_NAME=flarum-app
 
       - ADMIN_USER=admin
@@ -24,30 +23,31 @@ services:
 
       - SITE_TITLE=Flarum
       - SITE_URL=https://flarum.example.com
-  
+
       - DB_HOST=flarum-db
       - DB_NAME=flarum
       - DB_USER=flarum
       - DB_PASS=flarum
 
-      - DEBUG_MODE=FALSE
     networks:
       - proxy
       - services
     restart: always
 
   flarum-db:
-    image: tiredofit/mariadb
+    image: tiredofit/mariadb:10.8-latest
     container_name: flarum-db
     volumes:
       - ./db:/var/lib/mysql
     environment:
+      - TIMEZONE=America/Vancouver
+      - CONTAINER_NAME=flarum-db
       - ROOT_PASS=password
       - DB_NAME=flarum
       - DB_USER=flarum
       - DB_PASS=flarum
 
-      - CONTAINER_NAME=flarum-db
+
     networks:
       - services
     restart: always
@@ -60,6 +60,7 @@ services:
     volumes:
       - ./dbbackup:/backup
     environment:
+      - TIMEZONE=America/Vancouver
       - CONTAINER_NAME=flarum-db-backup
       - DB_HOST=flarum-db
       - DB_TYPE=mariadb
@@ -69,8 +70,6 @@ services:
       - DB_DUMP_FREQ=1440
       - DB_DUMP_BEGIN=0000
       - DB_CLEANUP_TIME=8640
-      - COMPRESSION=BZ
-      - MD5=TRUE
     networks:
       - services
     restart: always

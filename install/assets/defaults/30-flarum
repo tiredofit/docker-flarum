@@ -1,12 +1,5 @@
 #!/command/with-contenv bash
 
-### Set Debug Mode
-if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
-    DEBUG_MODE=true
-else
-    DEBUG_MODE=false
-fi
- 
 ADMIN_EMAIL=${ADMIN_EMAIL:-"admin@example.com"}
 ADMIN_PASS=${ADMIN_PASS:-"flarum"}
 ADMIN_PATH=${ADMIN_PATH:-"admin"}
