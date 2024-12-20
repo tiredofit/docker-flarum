@@ -19,7 +19,7 @@ cleanup() {
 }
 
 check_if_installed() {
-    cat ${NGINX_WEBROOT}/composer.json | grep "${1}" -c
+    cat "${NGINX_WEBROOT}"/composer.json | grep "${1}" -c
 }
 
 

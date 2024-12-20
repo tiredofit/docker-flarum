@@ -1,7 +1,7 @@
-FROM docker.io/tiredofit/nginx-php-fpm:8.1
+FROM docker.io/tiredofit/nginx-php-fpm:8.3-alpine
 LABEL maintainer="Dave Conroy (github.com/tiredofit)"
 
-ENV FLARUM_VERSION=1.4.0 \
+ENV FLARUM_VERSION=1.8.1 \
     NGINX_UPLOAD_MAX_SIZE=2G \
     NGINX_SITE_ENABLED=flarum \
     NGINX_WEBROOT="/www/flarum" \
@@ -15,16 +15,22 @@ ENV FLARUM_VERSION=1.4.0 \
     IMAGE_NAME="tiredofit/flarum" \
     IMAGE_REPO_URL="https://github.com/tiredofit/docker-flarum/"
 
-RUN set -x && \
-    apk update && \
-    apk upgrade && \
-    mkdir -p ${NGINX_WEBROOT} && \
-    chown -R ${NGINX_USER}:${NGINX_GROUP} ${NGINX_WEBROOT} && \
+RUN echo "" && \
+    source /assets/functions/00-container && \
+    set -x && \
+    package update && \
+    package upgrade && \
+    mkdir -p "${NGINX_WEBROOT}" && \
+    chown -R "${NGINX_USER}":"${NGINX_GROUP}" "${NGINX_WEBROOT}" && \
     mkdir -p /tmp/flarum && \
-    COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum ${NGINX_WEBROOT} v$FLARUM_VERSION --stability=beta && \
+    COMPOSER_CACHE_DIR="/tmp/flarum" \
+        composer create-project \
+            flarum/flarum \
+                "${NGINX_WEBROOT}" \
+                    v"${FLARUM_VERSION}" \
+                        --stability=beta && \
     composer clear-cache && \
     \
-    ## Data Persistence Setup
     mkdir /assets/install && \
     cp -R ${NGINX_WEBROOT}/public/assets /assets/install && \
     cp -R ${NGINX_WEBROOT}/storage /assets/install && \
@@ -34,9 +40,10 @@ RUN set -x && \
     ln -sf /data/assets ${NGINX_WEBROOT}/public/assets && \
     ln -sf /data/storage ${NGINX_WEBROOT}/storage && \
     ln -sf /data/extensions ${NGINX_WEBROOT}/extensions && \
-    \
-    ## Cleanup
-    rm -rf /var/cache/apk/* /tmp/*
+    chown -R "${NGINX_USER}":"${NGINX_GROUP}" "${NGINX_WEBROOT}" && \
+    package cleanup && \
+    rm -rf \
+            /tmp/*
 
 ENV COMPOSER_CACHE_DIR=${NGINX_WEBROOT}/extensions/.cache
 

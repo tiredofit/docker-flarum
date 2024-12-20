@@ -8,3 +8,4 @@ API_PATH=${API_PATH:-"api"}
 DB_PORT=${DB_PORT:-3306}
 DB_PREFIX=${DB_PREFIX:-"flarum_"}
 SITE_TITLE=${SITE_TITLE:-"Flarum"}
+APP_DEBUG=${APP_DEBUG:-"false"}
